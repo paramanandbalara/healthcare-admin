@@ -150,7 +150,6 @@ export default {
             // Implement fetching products from API and update 'products' data
             try {
                 const res = await this.axios.get(`/service-request/remarks?sr=${this.selectedService.id}`);
-                console.log(res.data)
                 this.remarks = res.data;
             } catch (error) {
                 console.error(error)
@@ -167,7 +166,6 @@ export default {
                 const res = await this.axios.post(`/service-request/remarks`,formData);
                 this.fetchServiceRemarks();
                 this.new_remark = '';
-                console.log(res.data,'remark')
             } catch (error) {
                 console.error(error)
             }
@@ -176,7 +174,6 @@ export default {
             // Implement fetching products from API and update 'products' data
             try {
                 const res = await this.axios.get(`/service-request/get`);
-                console.log(res.data)
                 this.serviceRequests = res.data;
             } catch (error) {
                 console.error(error)

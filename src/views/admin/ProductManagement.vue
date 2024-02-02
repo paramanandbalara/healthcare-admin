@@ -7,13 +7,16 @@
                 <v-btn color="primary" class="ma-4" @click="openAddProductDialog">Add New Product</v-btn>
             </div>
             <v-card-text>
-                <v-data-table @update:page="(e)=>{console.log(e)}" class="border rounded-lg" :headers="headers" :items="products" item-key="id">
+                <v-data-table class="border rounded-lg" :headers="headers" :items="products" item-key="id">
                     <template v-slot:[`item.thumbnail`]="{ item }">
                         <img :src="`data:image/jpeg;base64,${item.thumbnail}`" alt="Product Image" style="max-width: 100px;">
                         <!-- <img :src="loaded_thumbnails[item.id]" alt="Product Image" style="max-width: 100px;"> -->
                     </template>
                     <template v-slot:[`item.discount`]="{ item }">
                         <v-chip>{{ item.discount }}% OFF</v-chip>
+                    </template>
+                    <template v-slot:[`item.bestseller`]="{ item }">
+                        <v-switch @click="productBestsellerToggle(item)" :true-value="1" :false-value="0" v-model="item.bestseller" color="success"></v-switch>
                     </template>
                     <template v-slot:[`item.actions`]="{ item }">
                         <v-icon @click="editProduct(item)">mdi-pencil</v-icon>
@@ -47,7 +50,6 @@
                             show-size></v-file-input>
                         <v-file-input variant="outlined" v-model="imageUrl" label="Product Image" accept=".jpg,.jpeg,.png"
                             show-size multiple></v-file-input>
-
                         <!-- Additional Product Images -->
                         <!-- <v-row class="px-3" v-for="(image, index) in editedProduct.additionalImages" :key="index">
                             <v-text-field variant="outlined" v-model="editedProduct.additionalImages[index]"
@@ -97,6 +99,7 @@ export default {
                 discountedPrice: 0,
                 discount: 0,
                 category: null,
+                bestseller:0
                 // additionalImages: [''],
             },
             thumbnail: [],
@@ -107,6 +110,7 @@ export default {
                 { title: 'Category', value: 'category' },
                 { title: 'Price', value: 'price' },
                 { title: 'Discount', value: 'discount' },
+                { title: 'Bestseller', value: 'bestseller' },
                 { title: 'Actions', value: 'actions', sortable: false },
             ],
             // loaded_thumbnails:{}
@@ -142,6 +146,22 @@ export default {
                 const res = await this.axios.delete(`/product/${product.id}`);
                 this.fetchProducts();
                 console.log(res.data);
+            } catch (error) {
+                console.error(error)
+            }
+        },
+        async productBestsellerToggle(product) {
+            // Implement delete product functionality using API call
+            // Update products list after successful deletion
+            try {
+                console.log(product?.bestseller == 0)
+                let { bestseller, id:product_id } = product;
+                const formData = {
+                    bestseller:bestseller == 0?1:0,
+                    product_id
+                }
+                const res = await this.axios.post(`/product/bestsellers`,formData);
+                this.fetchProducts();
             } catch (error) {
                 console.error(error)
             }
